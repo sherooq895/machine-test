@@ -2,7 +2,9 @@ import React from 'react'
 
 function Dashboard() {
   return (
-    <div>Welcome Admin Panel</div>
+    <div>
+        <h1 className='text-center text-[30px] font-bold'>Welcome Admin Panel</h1>
+    </div>
   )
 }
 

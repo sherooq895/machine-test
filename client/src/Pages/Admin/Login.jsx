@@ -93,9 +93,6 @@ function Login() {
             <main className='flex justify-center items-center min-h-[100vh] bg-green-300'>
                 <div className="bg-white rounded-2xl shadow-2xl flex w-1/3 max-w-4xl">
                     <div className='w-full p-5'>
-                        <div className='text-left font-bold'>
-                            <span className="text-green-500">REVA </span>NEST
-                        </div>
                         <div className="py-10 text-center">
                             <h2 className='text-3xl font-bold text-green-500 mb-2'> Admin Login </h2>
                             <div className='w-fit mx-auto'>

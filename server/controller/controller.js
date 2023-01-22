@@ -83,20 +83,38 @@ module.exports = {
     },
     editEmployeeData: async (req, res) => {
         try {
-            console.log(req.body, 'req.body');
-            // const { name, email, phone, designation, gender, course, userId } = req.body
-            // if (name && email && phone && designation && gender && course && req.file.filename) {
+            const { name, email, phone, designation, gender, course, _id } = req.body
+            if (name && email && phone && designation && gender && course) {
+                const currentUser= await form.findOne({ _id: _id })
+                if (currentUser.email != email ) {
+                    const existEmail = await form.findOne({ email: email })
+                    if(existEmail){
+                        res.json({ msg: 'Email is already exist', err: true })
+                    }else{
+                        form.findOneAndUpdate({_id:_id},{
+                            $set:{
+                                name,
+                                email,
+                                phone,
+                                designation,
+                                gender,
+                                course: course?.split(','),
+                                image: req.file?.filename,
+                            }
+                        }).then((response)=>{
+                            console.log(response);
+                            console.log('response');
+                            res.json({edit:true})
+                        })
 
-            //     const existEmail = await form.findOne({ email: email })
-            //     if (existEmail ) {
-            //         res.json({ msg: 'Email is already exist', err: true })
-            //     } else {
-            //         res.status(200).json({ err: false })
-            //     }
+                    }
+                } else {
+                    res.status(200).json({ err: false })
+                }
 
-            // } else {
-            //     res.json({ msg: 'Please fill the required fields', err: true })
-            // }
+            } else {
+                res.json({ msg: 'Please fill the required fields', err: true })
+            }
         } catch (error) {
             console.log(error);
         }

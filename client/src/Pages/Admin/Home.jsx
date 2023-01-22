@@ -16,11 +16,15 @@ function EmployeeList() {
     const [formErr, setFormErr] = useState('');
     const [applicationList, setApplicationList] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [application, setApplication] = useState({});
+    const [application, setApplication] = useState({
+        name: '', email: '',
+        phone: '', designation: 'hr', gender: '',
+        image: '', course:''
+    });
 
     useEffect(() => {
         getEmployeeListData()
-    }, []);
+    }, [showModal]);
 
     useEffect(() => {
         AdminAuthenticeted()
@@ -54,14 +58,27 @@ function EmployeeList() {
     }
 
     const handleCheck = (event) => {
+        console.log(application); 
+        console.log(event.target.value); 
+       
         var updatedList = [...application.course];
         if (event.target.checked) {
+            console.log("inside true");
+            console.log(application.course);
             updatedList = [...application.course, event.target.value];
         } else {
+            console.log("inside false");
+            console.log(application.course);
             updatedList.splice(application.course.indexOf(event.target.value), 1);
         }
+         console.log(updatedList);
         setApplication({ ...application, course: updatedList });
     };
+
+    //  const handleCheck = (event) => {console.log("jj");console.log(application)}
+
+    
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -96,18 +113,20 @@ function EmployeeList() {
     const applicationForm = async (e) => {
         if (fileErr == '') {
             setFileErr('')
-            const formData = new FormData();
-            console.log(application, 'applicationnnnn');
+            const formDataa = new FormData();
             for (let key in application) {
-                formData.append(key, application[key])
+                formDataa.append(key, application[key])
             }
-            const { data } = await editForm(formData)
+            const { data } = await editForm(formDataa)
             if (data.auth === false) {
                 Navigate("/login");
-            }else if(data.err) {
+            } else if (data.err) {
                 console.log(data);
                 setFormErr(data.msg)
-            }else{
+            } else if (data.edit) {
+                alert('edit successfully')
+                setShowModal(!showModal)
+            } else {
                 setFormErr('')
                 setApplication({
                     name: '', email: '',
@@ -266,16 +285,16 @@ function EmployeeList() {
                                                 <label htmlFor="" className='text-left'>Course</label>
                                                 <div className="flex">
                                                     <div className=' p-2 flex items-center pl-0'>
-                                                        <input type="checkbox" name="course" value="mca" {...register('course', { required: true })} onChange={handleCheck} id="mca" placeholder='' className=' ' />
-                                                        <label htmlFor="mca" className="text-sm font-medium text-gray-900 ml-2 block" >MCA</label>
+                                                        <input type="checkbox" name="course" value="mca" {...register('course', { required: true })} onClick={handleCheck} id="mca" placeholder='' className=' ' />
+                                                        <label htmlFor="mca" className="courseChecks text-sm font-medium text-gray-900 ml-2 block" >MCA</label>
                                                     </div>
                                                     <div className='p-2 flex items-center'>
-                                                        <input type="checkbox" name="course" value="bca" {...register('course', { required: true })} onChange={handleCheck} id="bca" placeholder='' className=' ' />
-                                                        <label htmlFor="bca" className="text-sm font-medium text-gray-900 ml-2 block">BCA</label>
+                                                        <input type="checkbox" name="course" value="bca" {...register('course', { required: true })} onClick={handleCheck} id="bca" placeholder='' className=' ' />
+                                                        <label htmlFor="bca" className="courseChecks text-sm font-medium text-gray-900 ml-2 block">BCA</label>
                                                     </div>
                                                     <div className='p-2 flex items-center'>
-                                                        <input type="checkbox" name="course" value="bsc"{...register('course', { required: true })} onChange={handleCheck} id="bsc" placeholder='' className=' ' />
-                                                        <label htmlFor="bsc" className="text-sm font-medium text-gray-900 ml-2 block">BSC</label>
+                                                        <input type="checkbox" name="course" value="bsc"{...register('course', { required: true })} onClick={handleCheck} id="bsc" placeholder='' className=' ' />
+                                                        <label htmlFor="bsc" className="courseChecks text-sm font-medium text-gray-900 ml-2 block">BSC</label>
                                                     </div>
                                                 </div>
                                                 {errors.course && <p className='text-[13px] text-red-600'>Course is required.</p>}
@@ -283,7 +302,6 @@ function EmployeeList() {
                                             <div className='bg-gray-100 w-full p-2 flex items-start flex-col mb-5'>
                                                 <input ref={imageRef} type="file" name="image" onChange={fileUpload} id="image" placeholder='Image' className='bg-gray-100 outline-none text-sm flex-1 py-1' />
                                                 <img width='200px' src={file ? file : `http://localhost:4000/api/images/${application.image}`} alt="" />
-                                                {errors.image && <p className='text-[13px] text-red-600'>image is required.</p>}
                                                 {fileErr ? <p className='text-[13px] text-red-600'>{fileErr}</p> : ''}
                                             </div>
                                         </div>
