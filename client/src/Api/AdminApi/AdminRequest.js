@@ -12,4 +12,9 @@ export const newForm = (data) => axios.post(`${baseURL}newForm`, data, {
 
 export const AdminAuth = () => instance.get('isAdminAuth')
 export const getEmployeeList = () => instance.get('getEmployeeList')
-
+export const DeleteEmployeeData = (userId) => instance.put('deleteEmployeeData', {userId})
+export const editForm = (data) => axios.post(`${baseURL}editEmployeeData`, data, {
+    headers: {
+        "accesstoken": localStorage.getItem("adminToken")
+    },
+})

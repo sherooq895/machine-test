@@ -18,5 +18,7 @@ router.post('/login',controller.login)
 router.get('/isAdminAuth', verifyAdminJWT, controller.jwtCheck);
 router.post('/newForm',verifyAdminJWT, upload.single('image'), controller.newForm)
 router.get('/getEmployeeList',verifyAdminJWT, controller.getEmployeeList)
+router.put('/deleteEmployeeData',verifyAdminJWT, controller.DeleteEmployeeData)
+router.post('/editEmployeeData',verifyAdminJWT, controller.editEmployeeData)
 
 module.exports = router   

@@ -1,30 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom';
-import jwtDecode from 'jwt-decode'
-import axios from 'axios'
 import { newForm } from '../../Api/AdminApi/AdminRequest'
+import { AdminAuth } from '../../Api/AdminApi/AdminRequest'
 
 function Application() {
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm();
-
-    const imageRef = useRef(null);
     const Navigate = useNavigate()
-    const [userName, setUserName] = useState({})
+    const { register, handleSubmit, formState: { errors }, } = useForm();
+    const imageRef = useRef(null);
+
+    const [fileErr, setFileErr] = useState('');
+    const [formErr, setFormErr] = useState('');
     const [application, setApplication] = useState({
         name: '', email: '',
         phone: '', designation: '', gender: '',
         image: '', course: []
     })
-
-    console.log(application);
-    console.log('application');
 
     const handleCheck = (event) => {
         var updatedList = [...application.course];
@@ -37,30 +29,13 @@ function Application() {
     };
 
     useEffect(() => {
-        userAuthenticeted()
+        AdminAuthenticeted()
     }, [Navigate]);
-
-    const userAuthenticeted = () => {
-        axios.get("http://localhost:4000/isUserAuth", {
-            headers: {
-                "x-access-token": localStorage.getItem("token"),
-            },
-        }).then((response) => {
-            if (response.data.auth) {
-                setUserName(jwtDecode(localStorage.getItem("token")));
-                Navigate('/')
-            }
-            else Navigate("/login");
-        });
-    };
-
-
-
-
-    const logout = () => {
-        localStorage.removeItem('token');
-        Navigate("/login");
-    };
+    const AdminAuthenticeted = async () => {
+        const { data } = await AdminAuth()
+        if (data.auth) Navigate('/createEmployee')
+        else Navigate("/login");
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -72,38 +47,51 @@ function Application() {
 
 
     const fileUpload = (e) => {
-        setApplication({
-            ...application,
-            image: e.target.files[0]
-        })
+        const isValidFileUploaded = (file) => {
+            const validExtensions = ['png', 'jpeg', 'jpg']
+            const fileExtension = file.type.split('/')[1]
+            return validExtensions.includes(fileExtension)
+        }
+
+        const file = e.target.files[0];
+        if (isValidFileUploaded(file)) {
+            setFileErr('')
+            setApplication({
+                ...application,
+                image: file
+            })
+        } else {
+            setFileErr('this file is not will support')
+        }
+
     }
 
     const applicationForm = async (e) => {
-        // e.preventDefault()
-        const formData = new FormData();
-        for (let key in application) {
-            formData.append(key, application[key])
-        }
-        console.log(formData);
-        console.log('formDataxxxxx');
-
-
-        newForm(formData).then(response => {
-            if (response.data) {
-                console.log(response.data);
-                console.log('respons');
-                // const { name, value = '' } = e.target
-                // setApplication({
-                //     [name]: '',
-                //     image: value
-                // })
-                // setApplication({
-                //     name: '', address: '', email: '',
-                //     phone: '', company_name: '', Incubation: '',
-                // })
-                // imageRef.current.value = null;
+        if (fileErr == '') {
+            setFileErr('')
+            const formData = new FormData();
+            for (let key in application) {
+                formData.append(key, application[key])
             }
-        }).catch(error => console.log(error))
+            const { data } = await newForm(formData)
+            if (data.auth === false) {
+                Navigate("/login");
+            }else if(data.err) {
+                console.log(data);
+                setFormErr(data.msg)
+            }else{
+                setFormErr('')
+                setApplication({
+                    name: '', email: '',
+                    phone: '', designation: 'hr', gender: '',
+                    image: '', course: []
+                })
+                imageRef.current.value = null;
+            }
+        } else {
+            setFileErr('Please select image')
+        }
+
     }
 
 
@@ -117,62 +105,65 @@ function Application() {
                             <div className=' bg-green-500 border-2 w-10 border-green-500 inline-block mb-2'></div>
                         </div>
                     </div>
-                    <form autocomplete="off" onSubmit={handleSubmit(applicationForm)}>
+                    <form autoComplete="off" onSubmit={handleSubmit(applicationForm)}>
                         <div className="grid-cols-1  w-full grid md:grid-cols-2 gap-2 p-5">
-                            <div className='bg-gray-100 w-full p-2 flex items-center mb-5'>
-                                <input type="text" {...register('name', { required: true })} value={application.name} onChange={handleChange} id="name" placeholder='Name *' className='bg-gray-100 outline-none text-sm flex-1 py-1' />
+                            <div className='bg-gray-100 w-full p-2 flex items-start flex-col mb-5'>
+                                <input type="text" {...register('name', { required: true, pattern: /^@?(\w){1,50}$/ })} value={application.name} onChange={handleChange} id="name" placeholder='Name *' className='bg-gray-100 outline-none text-sm flex-1 py-1 w-full' />
+                                {errors.name && <p className='text-[13px] text-red-600'>name is required.</p>}
                             </div>
-                            {errors.name && <p>name is required.</p>}
 
 
-                            <div className='bg-gray-100 w-full p-2 flex items-center mb-5'>
-                                <input type="text" {...register('email')} value={application.email} onChange={handleChange} id="email" placeholder='Email *' className='bg-gray-100 outline-none text-sm flex-1 py-1' />
-                                {errors.email && <p>Email is required.</p>}
+                            <div className='bg-gray-100 w-full p-2 flex items-start flex-col mb-5'>
+                                <input type="text" {...register('email', { required: true, pattern: /^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/ })} value={application.email} onChange={handleChange} id="email" placeholder='Email *' className='bg-gray-100 outline-none text-sm flex-1 py-1 w-full' />
+                                {errors.email && <p className='text-[13px] text-red-600'>Email is required.</p>}
                             </div>
-                            <div className='bg-gray-100 w-full p-2 flex items-center mb-5'>
-                                <input type="text"{...register('phone')} value={application.phone} onChange={handleChange} id="phone" placeholder='Phone no' className='bg-gray-100 outline-none text-sm flex-1 py-1' />
-                                {errors.phone && <p>number is required.</p>}
+                            <div className='bg-gray-100 w-full p-2 flex items-start flex-col mb-5'>
+                                <input type="text"{...register('phone', { required: true, maxLength: 10, pattern: /^[0-9]{10}$/ })} value={application.phone} onChange={handleChange} id="phone" placeholder='Phone no' className='bg-gray-100 outline-none text-sm flex-1 py-1 w-full' />
+                                {errors.phone && <p className='text-[13px] text-red-600'>number is required.</p>}
                             </div>
-                            <div className='bg-gray-100 w-full p-2 flex items-center mb-5'>
-                                <select {...register('designation')} id="" className='bg-gray-100 outline-none text-sm flex-1 py-1' onChange={handleChange} required >
+                            <div className='bg-gray-100 w-full p-2 flex items-start flex-col mb-5'>
+                                <select {...register('designation', { required: true })} id="" className='bg-gray-100 outline-none text-sm flex-1 py-1 w-full' onChange={handleChange}>
                                     <option value="hr">HR</option>
                                     <option value="manager">MANAGER</option>
                                     <option value="sales">SALES</option>
                                 </select>
-                                {errors.designation && <p>Designation is required.</p>}
                             </div>
                             <div>
                                 <label htmlFor="" className='text-left'>Gender</label>
                                 <div className="flex">
                                     <div className=' p-2 flex items-center pl-0'>
                                         <input type="radio" {...register('gender', { required: true })} value="male" onChange={handleChange} id="male" placeholder='' className=' ' />
-                                        <label for="male" class="text-sm font-medium text-gray-900 ml-2 block" >Male</label>
+                                        <label htmlFor="male" className="text-sm font-medium text-gray-900 ml-2 block" >Male</label>
                                     </div>
                                     <div className='p-2 flex items-center'>
                                         <input type="radio" {...register('gender', { required: true })} value="female" onChange={handleChange} id="female" placeholder='' className=' ' />
-                                        <label for="female" class="text-sm font-medium text-gray-900 ml-2 block">Female</label>
+                                        <label htmlFor="female" className="text-sm font-medium text-gray-900 ml-2 block">Female</label>
                                     </div>
                                 </div>
+                                {errors.gender && <p className='text-[13px] text-red-600'>Gender is required.</p>}
                             </div>
                             <div>
                                 <label htmlFor="" className='text-left'>Course</label>
                                 <div className="flex">
                                     <div className=' p-2 flex items-center pl-0'>
-                                        <input type="checkbox" name="course" value="mca" onChange={handleCheck} id="mca" placeholder='' className=' ' />
-                                        <label for="mca" class="text-sm font-medium text-gray-900 ml-2 block" >MCA</label>
+                                        <input type="checkbox" name="course" value="mca" {...register('course', { required: true })} onChange={handleCheck} id="mca" placeholder='' className=' ' />
+                                        <label htmlFor="mca" className="text-sm font-medium text-gray-900 ml-2 block" >MCA</label>
                                     </div>
                                     <div className='p-2 flex items-center'>
-                                        <input type="checkbox" name="course" value="bca" onChange={handleCheck} id="bca" placeholder='' className=' ' />
-                                        <label for="bca" class="text-sm font-medium text-gray-900 ml-2 block">BCA</label>
+                                        <input type="checkbox" name="course" value="bca" {...register('course', { required: true })} onChange={handleCheck} id="bca" placeholder='' className=' ' />
+                                        <label htmlFor="bca" className="text-sm font-medium text-gray-900 ml-2 block">BCA</label>
                                     </div>
                                     <div className='p-2 flex items-center'>
-                                        <input type="checkbox" name="course" value="bsc" onChange={handleCheck} id="bsc" placeholder='' className=' ' />
-                                        <label for="bsc" class="text-sm font-medium text-gray-900 ml-2 block">BSC</label>
+                                        <input type="checkbox" name="course" value="bsc"{...register('course', { required: true })} onChange={handleCheck} id="bsc" placeholder='' className=' ' />
+                                        <label htmlFor="bsc" className="text-sm font-medium text-gray-900 ml-2 block">BSC</label>
                                     </div>
                                 </div>
+                                {errors.course && <p className='text-[13px] text-red-600'>Course is required.</p>}
                             </div>
-                            <div className='bg-gray-100 w-full p-2 flex items-center mb-5'>
-                                <input ref={imageRef} type="file" name="image" onChange={fileUpload} id="image" placeholder='Image' className='bg-gray-100 outline-none text-sm flex-1 py-1' required />
+                            <div className='bg-gray-100 w-full p-2 flex items-start flex-col mb-5'>
+                                <input ref={imageRef} {...register('image', { required: true })} type="file" name="image" onChange={fileUpload} id="image" placeholder='Image' className='bg-gray-100 outline-none text-sm flex-1 py-1' />
+                                {errors.image && <p className='text-[13px] text-red-600'>image is required.</p>}
+                                {fileErr ? <p className='text-[13px] text-red-600'>{fileErr}</p> : ''}
                             </div>
 
 
@@ -180,6 +171,8 @@ function Application() {
                         </div>
                         <div className='px-5 w-fit mx-auto pb-5'>
                             <button type='submit' className='border-2 text-green-500 border-green-500 rounded-full px-12 py-2 inline-block font-semibold hover:bg-green-500 hover:text-white'>Submit</button>
+                            {formErr ? <p className='text-[13px] text-red-600'>{formErr}</p> : ''}
+
                         </div>
                     </form>
                 </div>

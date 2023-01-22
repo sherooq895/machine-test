@@ -7,7 +7,7 @@ import { AdminLogin, AdminAuth } from '../../Api/AdminApi/AdminRequest'
 function Login() {
     const Navigate = useNavigate()
 
-    const userAuthenticeted = async () => {
+    const AdminAuthenticeted = async () => {
         try {
             const { data } = await AdminAuth()
             console.log(data, 'dataaaaaaa')
@@ -19,7 +19,7 @@ function Login() {
     };
 
     useEffect(() => {
-        userAuthenticeted()
+        AdminAuthenticeted()
     }, [Navigate]);
 
     const [logErr, setLogErr] = useState({

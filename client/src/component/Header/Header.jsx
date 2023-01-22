@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
   const Navigate = useNavigate()
   const logout = () => {
     localStorage.removeItem('adminToken');
-    Navigate("/admin/login");
+    Navigate("/login");
   };
   return (
     <div className='bg-[#b4ffc1] w-full py-6 items-center justify-between flex px-12 shadow-md shadow-[#f2f2f2] '>
