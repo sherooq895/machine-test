@@ -19,7 +19,7 @@ function EmployeeList() {
     const [application, setApplication] = useState({
         name: '', email: '',
         phone: '', designation: 'hr', gender: '',
-        image: '', course:''
+        image: '', course: []
     });
 
     useEffect(() => {
@@ -285,15 +285,15 @@ function EmployeeList() {
                                                 <label htmlFor="" className='text-left'>Course</label>
                                                 <div className="flex">
                                                     <div className=' p-2 flex items-center pl-0'>
-                                                        <input type="checkbox" name="course" value="mca" {...register('course', { required: true })} onClick={handleCheck} id="mca" placeholder='' className=' ' />
+                                                        <input type="checkbox" name="course" value="mca" {...register('course', { required: true })} onClick={handleCheck} id="mca" placeholder='' className=' ' checked={application.course.includes('mca') ? 'true' : ''} />
                                                         <label htmlFor="mca" className="courseChecks text-sm font-medium text-gray-900 ml-2 block" >MCA</label>
                                                     </div>
                                                     <div className='p-2 flex items-center'>
-                                                        <input type="checkbox" name="course" value="bca" {...register('course', { required: true })} onClick={handleCheck} id="bca" placeholder='' className=' ' />
+                                                        <input type="checkbox" name="course" value="bca" {...register('course', { required: true })} onClick={handleCheck} id="bca" placeholder='' className=' ' checked={application.course.includes('bca') ? 'true' : ''}  />
                                                         <label htmlFor="bca" className="courseChecks text-sm font-medium text-gray-900 ml-2 block">BCA</label>
                                                     </div>
                                                     <div className='p-2 flex items-center'>
-                                                        <input type="checkbox" name="course" value="bsc"{...register('course', { required: true })} onClick={handleCheck} id="bsc" placeholder='' className=' ' />
+                                                        <input type="checkbox" name="course" value="bsc"{...register('course', { required: true })} onClick={handleCheck} id="bsc" placeholder='' className=' ' checked={application.course.includes('bsc') ? 'true' : ''}  />
                                                         <label htmlFor="bsc" className="courseChecks text-sm font-medium text-gray-900 ml-2 block">BSC</label>
                                                     </div>
                                                 </div>

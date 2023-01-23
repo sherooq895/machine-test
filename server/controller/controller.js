@@ -84,6 +84,8 @@ module.exports = {
     editEmployeeData: async (req, res) => {
         try {
             const { name, email, phone, designation, gender, course, _id } = req.body
+            console.log('req.body');
+            console.log(req.body);
             if (name && email && phone && designation && gender && course) {
                 const currentUser= await form.findOne({ _id: _id })
                 if (currentUser.email != email ) {
@@ -109,7 +111,20 @@ module.exports = {
 
                     }
                 } else {
-                    res.status(200).json({ err: false })
+                    form.findOneAndUpdate({_id:_id},{
+                        $set:{
+                            name,
+                            phone,
+                            designation,
+                            gender,
+                            course: [course?.split(',')],
+                            image: req.file?.filename,
+                        }
+                    }).then((response)=>{
+                        console.log(response);
+                        console.log('response');
+                        res.json({edit:true})
+                    })
                 }
 
             } else {
