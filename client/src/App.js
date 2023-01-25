@@ -5,6 +5,7 @@ import Dashboard from "./component/Dashboard/Dashboard";
 import EmployeeList from './Pages/Admin/Home';
 import AdminLogin from './Pages/Admin/Login';
 import Application from './Pages/Admin/Application';
+import Error from './Pages/Admin/Error';
 
 
 
@@ -19,6 +20,7 @@ function App() {
           <Route path='/createEmployee' element={<Application />} />
           <Route path='/EmployeeList' element={<EmployeeList />} />
         </Route>
+          <Route path='/Error' element={<Error />} />
       </Routes>
      
     </div>

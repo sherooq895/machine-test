@@ -12,10 +12,7 @@ function Navbar() {
         {
           navLinks.map((link) => <NavItem link={link} key={link.id} />)
         }
-        {/* <div className='w-full border-t border-[#abe2b4]	' />
-        {
-          navLinks.slice(5, 6).map((link) => <NavItem link={link} key={link.id} />)
-        } */}
+    
       </div>
     </div>
   )

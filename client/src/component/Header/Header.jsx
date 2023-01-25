@@ -1,5 +1,5 @@
 import React from 'react'
-import { CpuChipIcon, BellIcon, UserCircleIcon  } from '@heroicons/react/24/outline'
+import {  UserCircleIcon  } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom';
 
 
@@ -12,8 +12,8 @@ import { useNavigate } from 'react-router-dom';
   return (
     <div className='bg-[#b4ffc1] w-full py-6 items-center justify-between flex px-12 shadow-md shadow-[#f2f2f2] '>
       <div className='items-center w-full justify-start flex space-x-4'>
-        <CpuChipIcon className='w-6 h-6' />
-        <h1 className='text-xl text-gray-900 font-medium'>Admin</h1>
+       
+        <h1 className='text-xl text-gray-900 font-medium'>Admin Panel</h1>
       </div>
 
       <div className='items-center justify-end space-x-6 flex w-full'>

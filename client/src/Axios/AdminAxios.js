@@ -1,7 +1,4 @@
-// import axios from 'axios'
 
-// const baseurl = 'http://localhost:5000'
-// const instance = axios.create({baseURL: baseurl})
 
 import axios from "axios";
 const baseURL = "http://localhost:4000/api/";

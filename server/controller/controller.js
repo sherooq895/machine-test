@@ -50,7 +50,7 @@ module.exports = {
                         phone,
                         designation,
                         gender,
-                        course: course.split(','),
+                        course,
                         image: req.file.filename,
                     })
                     employeeform.save()
@@ -62,6 +62,7 @@ module.exports = {
             }
         } catch (error) {
             console.log(error);
+            res.json({error:true})
         }
     },
     getEmployeeList: async (req, res) => {
@@ -70,6 +71,7 @@ module.exports = {
             res.status(200).json(EmployeeList)
         } catch (error) {
             console.log(error);
+            res.json({error:true})
         }
     },
     DeleteEmployeeData: async (req, res) => {
@@ -79,13 +81,12 @@ module.exports = {
             res.status(200).json(EmployeeList)
         } catch (error) {
             console.log(error);
+            res.json({error:true})
         }
     },
     editEmployeeData: async (req, res) => {
         try {
             const { name, email, phone, designation, gender, course, _id } = req.body
-            console.log('req.body');
-            console.log(req.body);
             if (name && email && phone && designation && gender && course) {
                 const currentUser= await form.findOne({ _id: _id })
                 if (currentUser.email != email ) {
@@ -100,7 +101,7 @@ module.exports = {
                                 phone,
                                 designation,
                                 gender,
-                                course: course?.split(','),
+                                course,
                                 image: req.file?.filename,
                             }
                         }).then((response)=>{
@@ -117,7 +118,7 @@ module.exports = {
                             phone,
                             designation,
                             gender,
-                            course: [course?.split(',')],
+                            course,
                             image: req.file?.filename,
                         }
                     }).then((response)=>{
@@ -132,6 +133,7 @@ module.exports = {
             }
         } catch (error) {
             console.log(error);
+            res.json({error:true})
         }
     }
 }

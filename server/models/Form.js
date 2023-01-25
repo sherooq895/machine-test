@@ -25,7 +25,7 @@ const Formtemplate=new mongoose.Schema({
         required:true
     },
     course:{
-        type:Array,
+        type:String,
         required:true
     },
     image:{

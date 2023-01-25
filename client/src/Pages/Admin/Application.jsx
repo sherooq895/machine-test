@@ -15,17 +15,21 @@ function Application() {
     const [application, setApplication] = useState({
         name: '', email: '',
         phone: '', designation: '', gender: '',
-        image: '', course: []
+        image: '', course: ''
     })
 
     const handleCheck = (event) => {
-        var updatedList = [...application.course];
-        if (event.target.checked) {
-            updatedList = [...application.course, event.target.value];
-        } else {
-            updatedList.splice(application.course.indexOf(event.target.value), 1);
-        }
-        setApplication({ ...application, course: updatedList });
+        // var updatedList = [...application.course];
+        // if (event.target.checked) {
+        //     updatedList = [...application.course, event.target.value];
+        // } else {
+        //     updatedList.splice(application.course.indexOf(event.target.value), 1);
+        // }
+        // setApplication({ ...application, course: updatedList });
+        setApplication({
+            ...application,
+            course: event.target.value
+        })
     };
 
     useEffect(() => {
@@ -76,15 +80,18 @@ function Application() {
             const { data } = await newForm(formData)
             if (data.auth === false) {
                 Navigate("/login");
-            }else if(data.err) {
-                console.log(data);
+            } else if (data.err) {
                 setFormErr(data.msg)
-            }else{
+            } else if(data.error==true){
+                Navigate("/error");
+            }
+            else {
+                alert('FORM SUBMITTED SUCCESSFULLY.')
                 setFormErr('')
                 setApplication({
                     name: '', email: '',
                     phone: '', designation: 'hr', gender: '',
-                    image: '', course: []
+                    image: '', course:''
                 })
                 imageRef.current.value = null;
             }
@@ -146,15 +153,15 @@ function Application() {
                                 <label htmlFor="" className='text-left'>Course</label>
                                 <div className="flex">
                                     <div className=' p-2 flex items-center pl-0'>
-                                        <input type="checkbox" name="course" value="mca" {...register('course', { required: true })} onChange={handleCheck} id="mca" placeholder='' className=' ' />
+                                        <input type="checkbox" name="course" value="mca" {...register('course', { required: true })} onChange={handleCheck} id="mca" placeholder='' className=' ' checked={application.course === "mca"} />
                                         <label htmlFor="mca" className="text-sm font-medium text-gray-900 ml-2 block" >MCA</label>
                                     </div>
                                     <div className='p-2 flex items-center'>
-                                        <input type="checkbox" name="course" value="bca" {...register('course', { required: true })} onChange={handleCheck} id="bca" placeholder='' className=' ' />
+                                        <input type="checkbox" name="course" value="bca" {...register('course', { required: true })} onChange={handleCheck} id="bca" placeholder='' className=' ' checked={application.course === "bca"} />
                                         <label htmlFor="bca" className="text-sm font-medium text-gray-900 ml-2 block">BCA</label>
                                     </div>
                                     <div className='p-2 flex items-center'>
-                                        <input type="checkbox" name="course" value="bsc"{...register('course', { required: true })} onChange={handleCheck} id="bsc" placeholder='' className=' ' />
+                                        <input type="checkbox" name="course" value="bsc"{...register('course', { required: true })} onChange={handleCheck} id="bsc" placeholder='' className=' ' checked={application.course === "bsc"} />
                                         <label htmlFor="bsc" className="text-sm font-medium text-gray-900 ml-2 block">BSC</label>
                                     </div>
                                 </div>

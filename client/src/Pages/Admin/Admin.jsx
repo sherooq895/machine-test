@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import Header from '../../component/Header/Header';
 import Navbar from '../../component/Navbar/Navbar';
 import {Outlet, useNavigate} from 'react-router-dom'
-import axios from 'axios';
 import { AdminAuth } from '../../Api/AdminApi/AdminRequest'
 
 function Admin() {
